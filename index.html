@@ -664,7 +664,7 @@
       <div class="guide-row">
         <div class="guide-dot" style="background:#2E7D32;"></div>
         <div>
-          <div class="guide-range">ปกติ &ge; 2.00</div>
+          <div class="guide-range">สถานภาพปกติ &ge; 2.00</div>
           <div class="guide-desc">สถานภาพปกติ ไม่มีปัญหาใดๆ</div>
         </div>
       </div>
@@ -946,15 +946,14 @@ function renderMainStatusCard(finalGPAX, retired, semResults) {
     badgeEl.className = 'status-badge badge-pro-low';
     const consec = getConsecLow(semResults);
     let barHtml = '<div class="pro-count-bar">';
-    for (let i=0;i<2;i++) barHtml += '<div class="pro-dot ' + (i < consec ? 'filled' : 'empty') + '">' + (i < consec ? '✕' : (i+1)) + '</div>';
-    barHtml += '<span style="font-size:12px; color:var(--amber); margin-left:4px;">ภาคโปรต่ำสะสม</span></div>';
-    warnEl.innerHTML = `<div class="warn-box warn-amber" style="margin-top:10px;">${warnSvg('amber')}GPAX อยู่ในโปรต่ำ (${gpaxStr}) — ติดต่อกัน ${consec}/2 ภาค ถ้าครบ 2 ภาคติดต่อกันจะถูกรีไทร์</div>${barHtml}`;
+    for (let i=0;i<2;i++) barHtml += '<div class="pro-dot ' + (i < consec ? 'filled' : 'empty') + '">' + (i < consec ? '✕' : (i+1)) + '</div>'
+    warnEl.innerHTML = `<div class="warn-box warn-amber" style="margin-top:10px;">${warnSvg('amber')}GPAX อยู่ในโปรต่ำ (${gpaxStr}) — ถ้าติดต่อกันครบ 2 ภาคจะถูกรีไทร์</div>${barHtml}`;
   } else if (finalGPAX < 2.00) {
     card.classList.add('status-pro-high');
     gpaEl.className = 'status-gpa gpa-pro-high';
-    badgeEl.innerHTML = '<span class="status-dot dot-pro-high"></span>โปรสูง (รอพินิจ)';
+    badgeEl.innerHTML = '<span class="status-dot dot-pro-high"></span>โปรสูง';
     badgeEl.className = 'status-badge badge-pro-high';
-    warnEl.innerHTML = `<div class="warn-box warn-gold" style="margin-top:10px;">${warnSvg('gold')}GPAX อยู่ในโปรสูง (${gpaxStr}) — ยังไม่มีผลทันที แต่ต้องทำให้ GPAX &ge; 2.00 เพื่อสำเร็จการศึกษา</div>`;
+    warnEl.innerHTML = `<div class="warn-box warn-gold" style="margin-top:10px;">${warnSvg('gold')}GPAX อยู่ในโปรสูง (${gpaxStr}) — ยังไม่มีผลทันที แต่ต้องมี GPAX &ge; 2.00 เพื่อสำเร็จการศึกษา</div>`;
   } else {
     card.classList.add('status-ok');
     gpaEl.className = 'status-gpa';
