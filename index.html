@@ -72,47 +72,20 @@
     color: rgba(255,255,255,0.7);
     letter-spacing: 0.5px;
   }
-  .logo-area {
-    padding: 28px 20px 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
-    position: relative;
-    z-index: 1;
-  }
-  .logo-circle {
-    width: 88px;
-    height: 88px;
-    border-radius: 50%;
-    border: 3px solid rgba(255,255,255,0.35);
-    background: rgba(255,255,255,0.12);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: rgba(255,255,255,0.6);
-    font-size: 11px;
-    text-align: center;
-    padding: 8px;
-    line-height: 1.4;
-    overflow: hidden;
-    cursor: pointer;
-  }
-  .logo-circle img {
-    width: 100%; height: 100%;
-    object-fit: contain;
-    border-radius: 50%;
-    display: none;
-  }
-  .logo-circle img.loaded { display: block; }
-  .logo-placeholder-text { display: block; }
-  .org-name {
-    color: white;
-    font-size: 15px;
-    font-weight: 500;
-    line-height: 1.5;
-    text-align: center;
-  }
+ .logo-area {
+  padding: 28px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.logo-img {
+  max-height: 60px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
   .org-name span {
     display: block;
     font-size: 12px;
