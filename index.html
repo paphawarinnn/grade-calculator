@@ -923,7 +923,16 @@ function renderMainStatusCard(finalGPAX, retired, semResults) {
 
   const gpaxStr = finalGPAX.toFixed(2);
   gpaEl.textContent = gpaxStr;
-
+  // เพิ่มก่อน if (retired) { ...
+  const onlyFirst = semResults.every(r => r.gpa === null || isNaN(r.gpa) || r.isFirst);
+  if (onlyFirst) {
+  card.classList.add('status-ok');
+  gpaEl.className = 'status-gpa';
+  badgeEl.innerHTML = '<span class="status-dot dot-ok"></span>เทอมแรก';
+  badgeEl.className = 'status-badge badge-ok';
+  warnEl.innerHTML = `<div class="warn-box warn-gold" style="margin-top:10px;">${warnSvg('gold')}เทอมแรกยังไม่นับเกณฑ์โปรต่ำและรีไทร์ — เกรดยังคิดสะสมตามปกติ</div>`;
+  return;
+ }
   if (retired) {
     card.classList.add('status-retire');
     gpaEl.className = 'status-gpa gpa-retire';
