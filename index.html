@@ -577,7 +577,7 @@
   <div class="logo-area">
     <div class="logo-circle" id="logoCircle" title="คลิกเพื่อเปลี่ยนโลโก้">
       <span class="logo-placeholder-text">วางโลโก้<br>ที่นี่</span>
-      <img id="logoImg" src="logo.png" alt="logo">
+      <img id="logoImg" src="ชื่อรูปใหม่.png">
     </div>
     <div class="org-name">
       สภาผู้แทนนิสิต องค์การนิสิต
@@ -662,8 +662,6 @@
           <svg class="icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
           เพิ่มวิชา
         </button>
-
-        <div class="grade-breakdown" id="gradeBreakdown"></div>
       </div>
     </div>
 
@@ -811,7 +809,17 @@ function initCheckerGrid() {
 }
 
 function onCheckerInput(idx, value) {
-  checkerGPAs[idx] = value.trim();
+  let v = value.trim();
+  const num = parseFloat(v);
+  if (v !== '' && !isNaN(num)) {
+    if (num > 4.00) { v = '4.00'; }
+    if (num < 0) { v = '0.00'; }
+    // update input element value if clamped
+    const rowEl = document.getElementById('checkerrow-' + idx);
+    const inputEl = rowEl ? rowEl.querySelector('.checker-input') : null;
+    if (inputEl && parseFloat(inputEl.value) !== parseFloat(v)) inputEl.value = v;
+  }
+  checkerGPAs[idx] = v;
   updateCheckerAll();
 }
 
@@ -853,9 +861,10 @@ function updateCheckerAll() {
         chipClass = 'chip-first';
         chipText = 'เทอมแรก';
         rowClass = 'row-first';
+        consecutiveLow = 0;
       } else {
         if (gpax < 1.50) {
-          if (!isFirst) { retired = true; retiredIdx = idx; }
+          retired = true; retiredIdx = idx;
           statusType = 'retire';
           chipClass = 'chip-retire';
           chipText = 'รีไทร์';
@@ -902,13 +911,13 @@ function updateCheckerAll() {
       chipEl.textContent = chipText;
     }
 
-    // Update input color
+    // Update input color based on GPAX at that semester
     const inputEl = rowEl ? rowEl.querySelector('.checker-input') : null;
     if (inputEl) {
       inputEl.className = 'checker-input';
-      if (gpa !== null && gpax !== null) {
-        if (gpax < 1.50 && !isFirst) inputEl.classList.add('val-retire');
-        else if (gpax < 1.75 && !isFirst) inputEl.classList.add('val-pro-low');
+      if (gpa !== null && !isNaN(gpa) && gpax !== null && !isFirst) {
+        if (gpax < 1.50) inputEl.classList.add('val-retire');
+        else if (gpax < 1.75) inputEl.classList.add('val-pro-low');
         else if (gpax < 2.00) inputEl.classList.add('val-pro-high');
       }
     }
@@ -1058,13 +1067,11 @@ function updateCalcResult() {
   const gpaEl = document.getElementById('calcGPADisplay');
   const crEl = document.getElementById('calcCreditDisplay');
   const letterEl = document.getElementById('calcLetterDisplay');
-  const bdEl = document.getElementById('gradeBreakdown');
 
   if (totalCr === 0) {
     gpaEl.textContent = '—';
     crEl.textContent = 'ยังไม่มีวิชา';
     letterEl.textContent = '';
-    bdEl.innerHTML = '';
     return;
   }
 
@@ -1072,22 +1079,10 @@ function updateCalcResult() {
   gpaEl.textContent = gpa.toFixed(2);
   crEl.textContent = totalCr + ' หน่วยกิต';
 
-  // Letter summary
-  let gradeLabel = gpa >= 3.5 ? 'ดีมาก' : gpa >= 3.0 ? 'ดี' : gpa >= 2.5 ? 'ค่อนข้างดี' : gpa >= 2.0 ? 'พอใช้' : gpa >= 1.5 ? 'โปรต่ำ' : gpa >= 1.0 ? 'ต่ำมาก' : 'ตก';
-  letterEl.innerHTML = `<span style="font-size:12px; opacity:0.75;">ระดับ</span><br>${gradeLabel}`;
-
-  // Breakdown
-  if (Object.keys(gradeCounts).length > 0) {
-    bdEl.innerHTML = Object.entries(gradeCounts).map(([g, cnt]) => `
-      <div class="grade-chip">
-        <div class="grade-chip-letter">${g} <span style="font-size:11px; font-weight:400;">&times;${cnt}</span></div>
-        <div class="grade-chip-pts">${GRADE_POINTS[g] !== undefined ? GRADE_POINTS[g].toFixed(2) : 'W'} pts</div>
-      </div>
-    `).join('');
-  } else {
-    bdEl.innerHTML = '';
-  }
+  // Clear letter grade label
+  letterEl.innerHTML = '';
 }
+
 
 
 // ===== INIT =====
