@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เช็คโปร — สภาผู้แทนนิสิต มก.ฉกส.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #1B5E20;
+    --green-mid: #2E7D32;
+    --green-light: #E8F5E9;
+    --green-soft: #C8E6C9;
+    --gold: #B8860B;
+    --gold-light: #FFF8DC;
+    --gold-border: #D4A017;
+    --red: #B71C1C;
+    --red-light: #FFEBEE;
+    --amber: #E65100;
+    --amber-light: #FFF3E0;
+    --gray: #37474F;
+    --gray-mid: #607D8B;
+    --gray-light: #ECEFF1;
+    --border: #D0D7DE;
+    --bg: #F6F8F3;
+    --white: #FFFFFF;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background: var(--bg);
+    color: var(--gray);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--green);
+    padding: 0 0 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -30px;
+    width: 150px; height: 150px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .header-top {
+    background: rgba(0,0,0,0.15);
+    padding: 10px 20px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.5px;
+  }
+  .logo-area {
+    padding: 28px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+    z-index: 1;
+  }
+  .logo-circle {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.6);
+    font-size: 11px;
+    text-align: center;
+    padding: 8px;
+    line-height: 1.4;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .logo-circle img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    border-radius: 50%;
+    display: none;
+  }
+  .logo-circle img.loaded { display: block; }
+  .logo-placeholder-text { display: block; }
+  .org-name {
+    color: white;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.5;
+    text-align: center;
+  }
+  .org-name span {
+    display: block;
+    font-size: 12px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.75);
+    margin-top: 2px;
+  }
+
+  .app-title {
+    color: white;
+    font-size: 22px;
+    font-weight: 600;
+    margin-top: 8px;
+  }
+  .app-sub {
+    color: rgba(255,255,255,0.7);
+    font-size: 13px;
+  }
+
+  /* TABS */
+  .tabs-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 0 16px;
+    margin-top: -1px;
+  }
+  .tabs {
+    background: var(--white);
+    border-radius: 50px;
+    display: inline-flex;
+    padding: 4px;
+    gap: 2px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    margin-top: 20px;
+  }
+  .tab-btn {
+    border: none;
+    background: none;
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--gray-mid);
+    transition: all 0.2s;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .tab-btn.active {
+    background: var(--green);
+    color: white;
+  }
+
+  /* MAIN */
+  .main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 20px 16px 60px;
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* STATUS SUMMARY CARD */
+  .status-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .status-card.status-ok { border-left: 4px solid #2E7D32; }
+  .status-card.status-pro-high { border-left: 4px solid #F9A825; }
+  .status-card.status-pro-low { border-left: 4px solid #FF6D00; }
+  .status-card.status-retire { border-left: 4px solid #B71C1C; }
+  .status-card.status-empty { border-left: 4px solid var(--border); }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .badge-ok { background: var(--green-light); color: var(--green); }
+  .badge-pro-high { background: #FFF8E1; color: #E65100; }
+  .badge-pro-low { background: #FBE9E7; color: #BF360C; }
+  .badge-retire { background: var(--red-light); color: var(--red); }
+  .badge-empty { background: var(--gray-light); color: var(--gray-mid); }
+
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .dot-ok { background: var(--green-mid); }
+  .dot-pro-high { background: #F9A825; }
+  .dot-pro-low { background: #FF6D00; }
+  .dot-retire { background: var(--red); }
+
+  .status-gpa {
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--green);
+    margin: 8px 0 4px;
+  }
+  .status-gpa.gpa-pro-high { color: #E65100; }
+  .status-gpa.gpa-pro-low { color: #BF360C; }
+  .status-gpa.gpa-retire { color: var(--red); }
+  .status-label { font-size: 13px; color: var(--gray-mid); }
+
+  .warn-box {
+    background: var(--red-light);
+    border: 1px solid #FFCDD2;
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--red);
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .warn-box.warn-amber {
+    background: var(--amber-light);
+    border-color: #FFCCBC;
+    color: var(--amber);
+  }
+  .warn-box.warn-gold {
+    background: var(--gold-light);
+    border-color: #FFE082;
+    color: var(--gold);
+  }
+  .warn-icon {
+    flex-shrink: 0;
+    width: 16px; height: 16px;
+    margin-top: 1px;
+  }
+
+  /* CHECKER GRID */
+  .checker-grid {
+    display: grid;
+    gap: 8px;
+  }
+
+  .checker-row {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    gap: 12px;
+    transition: border-color 0.2s;
+  }
+  .checker-row:focus-within {
+    border-color: var(--green-mid);
+  }
+  .checker-row.row-ok { border-left: 3px solid #2E7D32; }
+  .checker-row.row-pro-high { border-left: 3px solid #F9A825; }
+  .checker-row.row-pro-low { border-left: 3px solid #FF6D00; }
+  .checker-row.row-retire { border-left: 3px solid #B71C1C; }
+  .checker-row.row-first { border-left: 3px solid #1565C0; }
+
+  .checker-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gray);
+    min-width: 100px;
+    flex-shrink: 0;
+  }
+  .checker-input {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--green);
+    width: 100px;
+    outline: none;
+    transition: border-color 0.2s;
+    text-align: center;
+  }
+  .checker-input:focus { border-color: var(--green-mid); }
+  .checker-input.val-pro-high { color: #E65100; }
+  .checker-input.val-pro-low { color: #BF360C; }
+  .checker-input.val-retire { color: var(--red); }
+
+  .checker-status-chip {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 50px;
+    white-space: nowrap;
+    margin-left: auto;
+  }
+  .chip-ok { background: var(--green-light); color: var(--green); }
+  .chip-first { background: #E3F2FD; color: #1565C0; }
+  .chip-pro-high { background: #FFF8E1; color: #E65100; }
+  .chip-pro-low { background: #FBE9E7; color: #BF360C; }
+  .chip-retire { background: var(--red-light); color: var(--red); font-weight: 700; }
+  .chip-empty { background: var(--gray-light); color: var(--gray-mid); }
+
+  /* HISTORY TABLE */
+  .history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 10px;
+  }
+  .history-table th {
+    text-align: left;
+    padding: 7px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gray-mid);
+    border-bottom: 1px solid var(--border);
+  }
+  .history-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--gray-light);
+  }
+  .history-table tr:last-child td { border-bottom: none; }
+
+  /* ===== CALC TAB - SINGLE SEMESTER ===== */
+  .calc-single-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  .calc-result-bar {
+    background: var(--green);
+    color: white;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .calc-result-label { font-size: 13px; opacity: 0.8; }
+  .calc-result-gpa { font-size: 32px; font-weight: 700; line-height: 1; }
+  .calc-result-sub { font-size: 12px; opacity: 0.75; margin-top: 2px; }
+  .calc-result-right { text-align: right; }
+
+  .calc-subjects-area { padding: 16px; }
+
+  .calc-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+  .calc-table th {
+    text-align: left;
+    padding: 6px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gray-mid);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .calc-table td {
+    padding: 7px 8px;
+    border-bottom: 1px solid var(--gray-light);
+    vertical-align: middle;
+  }
+  .calc-table tr:last-child td { border-bottom: none; }
+
+  .sub-name-input {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 8px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 13px;
+    color: var(--gray);
+    background: var(--bg);
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .sub-name-input:focus { border-color: var(--green-mid); }
+  .sub-credit-input {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 8px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 13px;
+    color: var(--gray);
+    background: var(--bg);
+    width: 56px;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .sub-credit-input:focus { border-color: var(--green-mid); }
+  .sub-grade-select {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 8px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 13px;
+    color: var(--gray);
+    background: var(--bg);
+    width: 72px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .sub-grade-select:focus { border-color: var(--green-mid); }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px 16px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    background: var(--white);
+    color: var(--gray);
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  .btn:hover { background: var(--gray-light); }
+  .btn-green {
+    background: var(--green);
+    color: white;
+    border-color: var(--green);
+  }
+  .btn-green:hover { background: var(--green-mid); }
+  .btn-sm { padding: 5px 12px; font-size: 13px; }
+  .btn-icon {
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--gray-mid);
+    padding: 4px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    font-size: 16px;
+    transition: color 0.15s;
+  }
+  .btn-icon:hover { color: var(--red); }
+
+  /* GRADE BREAKDOWN */
+  .grade-breakdown {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--gray-light);
+  }
+  .grade-chip {
+    background: var(--bg);
+    border-radius: 6px;
+    padding: 6px 8px;
+    text-align: center;
+  }
+  .grade-chip-letter { font-size: 13px; font-weight: 700; color: var(--gray); }
+  .grade-chip-pts { font-size: 11px; color: var(--gray-mid); }
+
+  /* GUIDE SECTION */
+  .guide-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 16px;
+  }
+  .guide-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray);
+    margin-bottom: 10px;
+  }
+  .guide-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--gray-light);
+    font-size: 13px;
+  }
+  .guide-row:last-child { border-bottom: none; }
+  .guide-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .guide-range { font-weight: 500; min-width: 90px; color: var(--gray); }
+  .guide-desc { color: var(--gray-mid); line-height: 1.5; }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 24px 16px;
+    font-size: 12px;
+    color: var(--gray-mid);
+    border-top: 1px solid var(--border);
+    margin-top: 20px;
+  }
+
+  /* PRO COUNT BAR */
+  .pro-count-bar {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-top: 8px;
+  }
+  .pro-dot {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700;
+  }
+  .pro-dot.filled { background: #FF6D00; border-color: #FF6D00; color: white; }
+  .pro-dot.empty { background: var(--bg); color: var(--gray-mid); }
+
+  /* SVG ICON HELPERS */
+  .icon { display: inline-block; vertical-align: middle; flex-shrink: 0; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  .calc-single-card { animation: fadeIn 0.2s ease; }
+
+  @media (max-width: 480px) {
+    .app-title { font-size: 18px; }
+    .status-gpa { font-size: 30px; }
+    .grade-breakdown { grid-template-columns: repeat(4, 1fr); }
+    .tab-btn { padding: 8px 14px; font-size: 13px; }
+    .checker-label { min-width: 80px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">ระบบตรวจสอบสถานภาพการศึกษา</div>
+  <div class="logo-area">
+    <div class="logo-circle" id="logoCircle" title="คลิกเพื่อเปลี่ยนโลโก้">
+      <span class="logo-placeholder-text">วางโลโก้<br>ที่นี่</span>
+      <img id="logoImg" alt="logo">
+    </div>
+    <div class="org-name">
+      สภาผู้แทนนิสิต องค์การนิสิต
+      <span>มหาวิทยาลัยเกษตรศาสตร์ วิทยาเขตเฉลิมพระเกียรติ จังหวัดสกลนคร</span>
+    </div>
+  </div>
+  <div style="padding-bottom: 4px;">
+    <div class="app-title">เช็คโปรและสถานะการศึกษา</div>
+    <div class="app-sub">ตรวจสอบเกรดเฉลี่ยสะสมและสถานภาพนิสิต</div>
+  </div>
+  <div class="tabs-wrap">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('checker', this)">เช็คสถานะ</button>
+      <button class="tab-btn" onclick="switchTab('calc', this)">คำนวณเกรด</button>
+      <button class="tab-btn" onclick="switchTab('guide', this)">คู่มือ</button>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- TAB: CHECKER -->
+  <div class="tab-content active" id="tab-checker">
+
+    <div class="status-card status-empty" id="mainStatusCard">
+      <div class="status-label" style="margin-bottom:6px; font-size:13px;">เกรดเฉลี่ยสะสม (GPAX)</div>
+      <div class="status-gpa" id="displayGPAX">—</div>
+      <span class="status-badge badge-empty" id="statusBadge"><span class="status-dot"></span>ยังไม่มีข้อมูล</span>
+      <div id="warningArea"></div>
+    </div>
+
+    <div style="margin-bottom: 10px;">
+      <div class="section-title">กรอกเกรดเฉลี่ยแต่ละเทอม</div>
+    </div>
+
+    <div class="checker-grid" id="checkerGrid"></div>
+
+    <div id="historySection" style="display:none; margin-top:16px;">
+      <div class="status-card">
+        <div class="section-title">ตารางสรุปแต้มเฉลี่ยสะสม</div>
+        <table class="history-table" id="historyTable">
+          <thead>
+            <tr>
+              <th>ภาค</th>
+              <th>GPA ภาคนี้</th>
+              <th>GPAX สะสม</th>
+              <th>สถานะ</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TAB: CALCULATOR -->
+  <div class="tab-content" id="tab-calc">
+
+    <div class="calc-single-card" id="calcCard">
+      <div class="calc-result-bar">
+        <div>
+          <div class="calc-result-label">เกรดเฉลี่ยภาคนี้ (GPA)</div>
+          <div class="calc-result-gpa" id="calcGPADisplay">—</div>
+          <div class="calc-result-sub" id="calcCreditDisplay">ยังไม่มีวิชา</div>
+        </div>
+        <div class="calc-result-right" id="calcLetterDisplay" style="font-size:14px; font-weight:600; opacity:0.9;"></div>
+      </div>
+      <div class="calc-subjects-area">
+        <table class="calc-table">
+          <thead>
+            <tr>
+              <th>ชื่อวิชา</th>
+              <th style="width:64px; text-align:center;">หน่วยกิต</th>
+              <th style="width:76px; text-align:center;">เกรด</th>
+              <th style="width:36px;"></th>
+            </tr>
+          </thead>
+          <tbody id="calcSubjectList"></tbody>
+        </table>
+        <button class="btn btn-green btn-sm" onclick="addCalcSubject()">
+          <svg class="icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+          เพิ่มวิชา
+        </button>
+
+        <div class="grade-breakdown" id="gradeBreakdown"></div>
+      </div>
+    </div>
+
+    <div class="guide-card" style="font-size:13px; color:var(--gray-mid);">
+      <div class="guide-title">ตารางค่าคะแนนเกรด</div>
+      <div style="display:grid; grid-template-columns: repeat(4,1fr); gap:6px;">
+        <div style="text-align:center;"><div style="font-weight:700; color:var(--gray);">A</div><div style="font-size:12px;">4.00</div></div>
+        <div style="text-align:center;"><div style="font-weight:700; color:var(--gray);">B+</div><div style="font-size:12px;">3.50</div></div>
+        <div style="text-align:center;"><div style="font-weight:700; color:var(--gray);">B</div><div style="font-size:12px;">3.00</div></div>
+        <div style="text-align:center;"><div style="font-weight:700; color:var(--gray);">C+</div><div style="font-size:12px;">2.50</div></div>
+        <div style="text-align:center;"><div style="font-weight:700; color:var(--gray);">C</div><div style="font-size:12px;">2.00</div></div>
+        <div style="text-align:center;"><div style="font-weight:700; color:var(--gray);">D+</div><div style="font-size:12px;">1.50</div></div>
+        <div style="text-align:center;"><div style="font-weight:700; color:var(--gray);">D</div><div style="font-size:12px;">1.00</div></div>
+        <div style="text-align:center;"><div style="font-weight:700; color:var(--gray);">F</div><div style="font-size:12px;">0.00</div></div>
+      </div>
+      <div style="margin-top:8px; padding-top:8px; border-top:1px solid var(--gray-light); font-size:12px;">W = ถอนวิชา ไม่นับในการคำนวณ</div>
+    </div>
+
+  </div>
+
+  <!-- TAB: GUIDE -->
+  <div class="tab-content" id="tab-guide">
+    <div class="guide-card">
+      <div class="guide-title">เกณฑ์สถานภาพนิสิต</div>
+      <div class="guide-row">
+        <div class="guide-dot" style="background:#2E7D32;"></div>
+        <div>
+          <div class="guide-range">ปกติ &ge; 2.00</div>
+          <div class="guide-desc">สถานภาพปกติ ไม่มีปัญหาใดๆ</div>
+        </div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-dot" style="background:#F9A825;"></div>
+        <div>
+          <div class="guide-range">โปรสูง 1.75–1.99</div>
+          <div class="guide-desc">สถานภาพรอพินิจ (โปรสูง) — ยังไม่มีผลทันที แต่ถ้าถึงปี 4 แล้ว GPAX ยังไม่ถึง 2.00 จะสำเร็จการศึกษาไม่ได้</div>
+        </div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-dot" style="background:#FF6D00;"></div>
+        <div>
+          <div class="guide-range">โปรต่ำ 1.50–1.74</div>
+          <div class="guide-desc">สถานภาพรอพินิจ (โปรต่ำ) — ถ้าติดโปรต่ำ 2 ภาคการศึกษาปกติติดต่อกัน จะถูกรีไทร์</div>
+        </div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-dot" style="background:#B71C1C;"></div>
+        <div>
+          <div class="guide-range">รีไทร์ &lt; 1.50</div>
+          <div class="guide-desc">GPAX ต่ำกว่า 1.50 จะสิ้นสุดสถานภาพนิสิตทันที (ไม่นับภาคเรียนที่ 1/1 ของนิสิตใหม่)</div>
+        </div>
+      </div>
+    </div>
+    <div class="guide-card">
+      <div class="guide-title">หมายเหตุสำคัญ</div>
+      <div class="guide-row">
+        <div class="guide-dot" style="background:#1565C0;"></div>
+        <div>
+          <div class="guide-range">เทอมแรก (ปี 1 เทอม 1)</div>
+          <div class="guide-desc">ไม่นับการตรวจโปรต่ำและรีไทร์ทันที — เกรดยังคิดสะสมตามปกติ แต่เงื่อนไขโปรต่ำ 2 ครั้งติดกันและรีไทร์ &lt; 1.50 ยังไม่บังคับใช้ในเทอมนี้</div>
+        </div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-dot" style="background:#607D8B;"></div>
+        <div>
+          <div class="guide-range">เกรดที่ใช้คำนวณ</div>
+          <div class="guide-desc">A=4.00, B+=3.50, B=3.00, C+=2.50, C=2.00, D+=1.50, D=1.00, F=0.00 (W ถอน ไม่นับในเกรดเฉลี่ย)</div>
+        </div>
+      </div>
+    </div>
+    <div class="guide-card">
+      <div class="guide-title">วิธีใช้งาน</div>
+      <div class="guide-row" style="display:block;">
+        <div style="font-size:13px; color:var(--gray-mid); line-height:1.8;">
+          <b style="color:var(--green);">แท็บ "เช็คสถานะ"</b><br>
+          — กรอกเกรดเฉลี่ย (GPA) ในแต่ละเทอมในช่องที่ตรงกัน<br>
+          — ระบบจะคำนวณ GPAX สะสมและตรวจสอบสถานะโปรอัตโนมัติ<br>
+          — ปล่อยว่างเทอมที่ยังไม่ถึงหรือยังไม่มีผลเกรด<br><br>
+          <b style="color:var(--green);">แท็บ "คำนวณเกรด"</b><br>
+          — ใส่ชื่อวิชา หน่วยกิต และเกรดที่คิดว่าจะได้<br>
+          — ระบบคำนวณ GPA รายวิชาให้อัตโนมัติ<br>
+          — ใช้วางแผนก่อนผลเกรดออก
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  สภาผู้แทนนิสิต องค์การนิสิต มหาวิทยาลัยเกษตรศาสตร์ วิทยาเขตเฉลิมพระเกียรติ จังหวัดสกลนคร<br>
+  <span style="color:#aaa;">ข้อมูลอ้างอิง: ข้อบังคับมหาวิทยาลัยเกษตรศาสตร์ ว่าด้วยการศึกษาระดับปริญญาตรี</span>
+</div>
+
+<script>
+const GRADE_POINTS = { A:4.0, 'B+':3.5, B:3.0, 'C+':2.5, C:2.0, 'D+':1.5, D:1.0, F:0.0 };
+const GRADE_OPTIONS = ['A','B+','B','C+','C','D+','D','F','W'];
+
+// ===== TABS =====
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ===== CHECKER: fixed semester list pY1T1 ... pY8T2 =====
+const SEMESTER_LIST = [];
+for (let y = 1; y <= 8; y++) {
+  for (let t = 1; t <= 2; t++) {
+    SEMESTER_LIST.push({ year: y, term: t, label: 'ปี ' + y + ' เทอม ' + t });
+  }
+}
+
+// Store GPA values per semester index
+const checkerGPAs = new Array(SEMESTER_LIST.length).fill('');
+
+function initCheckerGrid() {
+  const grid = document.getElementById('checkerGrid');
+  grid.innerHTML = '';
+  SEMESTER_LIST.forEach((sem, idx) => {
+    const row = document.createElement('div');
+    row.className = 'checker-row' + (idx === 0 ? ' row-first' : '');
+    row.id = 'checkerrow-' + idx;
+
+    const isFirst = idx === 0;
+    const firstNote = isFirst ? ' <span style="font-size:11px; color:#1565C0;">(เทอมแรก)</span>' : '';
+
+    row.innerHTML = `
+      <span class="checker-label">${sem.label}${firstNote}</span>
+      <input
+        class="checker-input"
+        type="number"
+        step="0.01" min="0" max="4"
+        placeholder="0.00"
+        value="${checkerGPAs[idx]}"
+        onchange="onCheckerInput(${idx}, this.value)"
+        oninput="onCheckerInput(${idx}, this.value)"
+      >
+      <span class="checker-status-chip chip-empty" id="checkerchip-${idx}">—</span>
+    `;
+    grid.appendChild(row);
+  });
+  updateCheckerAll();
+}
+
+function onCheckerInput(idx, value) {
+  checkerGPAs[idx] = value.trim();
+  updateCheckerAll();
+}
+
+function updateCheckerAll() {
+  // Build cumulative calculation
+  let cumulativePts = 0;
+  let cumulativeCount = 0; // number of sems with data (for weighted avg we need credits — since no credits, we treat each entered GPA equally as 1 unit weight, OR we can just average across filled sems)
+  // Actually: user enters GPA per semester, no credits. We'll do a simple unweighted average across entered sems.
+  // But that's not accurate academically. We'll note this in UI.
+  // Better: treat entered GPA as equally weighted (each semester = 1 weight unit)
+
+  let consecutiveLow = 0;
+  let retired = false;
+  let retiredIdx = -1;
+  let semResults = [];
+
+  SEMESTER_LIST.forEach((sem, idx) => {
+    const rawVal = checkerGPAs[idx];
+    const gpa = rawVal !== '' && rawVal !== null ? parseFloat(rawVal) : null;
+    const isFirst = idx === 0;
+
+    let gpax = null;
+    if (gpa !== null && !isNaN(gpa)) {
+      cumulativePts += gpa;
+      cumulativeCount++;
+    }
+    if (cumulativeCount > 0) {
+      gpax = cumulativePts / cumulativeCount;
+    }
+
+    let statusType = 'empty';
+    let chipClass = 'chip-empty';
+    let chipText = '—';
+    let rowClass = isFirst ? 'row-first' : '';
+
+    if (!retired && gpa !== null && !isNaN(gpa)) {
+      if (isFirst) {
+        statusType = 'first';
+        chipClass = 'chip-first';
+        chipText = 'เทอมแรก';
+        rowClass = 'row-first';
+      } else {
+        if (gpax < 1.50) {
+          if (!isFirst) { retired = true; retiredIdx = idx; }
+          statusType = 'retire';
+          chipClass = 'chip-retire';
+          chipText = 'รีไทร์';
+          rowClass = 'row-retire';
+        } else if (gpax < 1.75) {
+          consecutiveLow++;
+          if (consecutiveLow >= 2) { retired = true; retiredIdx = idx; }
+          statusType = 'pro-low';
+          chipClass = 'chip-pro-low';
+          chipText = 'โปรต่ำ';
+          rowClass = 'row-pro-low';
+        } else if (gpax < 2.00) {
+          consecutiveLow = 0;
+          statusType = 'pro-high';
+          chipClass = 'chip-pro-high';
+          chipText = 'โปรสูง';
+          rowClass = 'row-pro-high';
+        } else {
+          consecutiveLow = 0;
+          statusType = 'ok';
+          chipClass = 'chip-ok';
+          chipText = 'ปกติ';
+          rowClass = 'row-ok';
+        }
+      }
+    } else if (retired) {
+      statusType = 'retire';
+      chipClass = 'chip-empty';
+      chipText = '—';
+    }
+
+    semResults.push({ idx, sem, gpa, gpax, statusType, chipClass, chipText, rowClass, isFirst });
+
+    // Update row class
+    const rowEl = document.getElementById('checkerrow-' + idx);
+    if (rowEl) {
+      rowEl.className = 'checker-row' + (rowClass ? ' ' + rowClass : '');
+    }
+
+    // Update chip
+    const chipEl = document.getElementById('checkerchip-' + idx);
+    if (chipEl) {
+      chipEl.className = 'checker-status-chip ' + chipClass;
+      chipEl.textContent = chipText;
+    }
+
+    // Update input color
+    const inputEl = rowEl ? rowEl.querySelector('.checker-input') : null;
+    if (inputEl) {
+      inputEl.className = 'checker-input';
+      if (gpa !== null && gpax !== null) {
+        if (gpax < 1.50 && !isFirst) inputEl.classList.add('val-retire');
+        else if (gpax < 1.75 && !isFirst) inputEl.classList.add('val-pro-low');
+        else if (gpax < 2.00) inputEl.classList.add('val-pro-high');
+      }
+    }
+  });
+
+  // Final GPAX
+  const finalGPAX = cumulativeCount > 0 ? cumulativePts / cumulativeCount : null;
+  renderMainStatusCard(finalGPAX, retired, semResults);
+  renderHistoryTable(semResults);
+}
+
+function renderMainStatusCard(finalGPAX, retired, semResults) {
+  const card = document.getElementById('mainStatusCard');
+  const gpaEl = document.getElementById('displayGPAX');
+  const badgeEl = document.getElementById('statusBadge');
+  const warnEl = document.getElementById('warningArea');
+
+  card.className = 'status-card';
+
+  if (finalGPAX === null) {
+    card.classList.add('status-empty');
+    gpaEl.textContent = '—';
+    gpaEl.className = 'status-gpa';
+    badgeEl.innerHTML = '<span class="status-dot"></span>ยังไม่มีข้อมูล';
+    badgeEl.className = 'status-badge badge-empty';
+    warnEl.innerHTML = '';
+    return;
+  }
+
+  const gpaxStr = finalGPAX.toFixed(2);
+  gpaEl.textContent = gpaxStr;
+
+  if (retired) {
+    card.classList.add('status-retire');
+    gpaEl.className = 'status-gpa gpa-retire';
+    badgeEl.innerHTML = '<span class="status-dot dot-retire"></span>สิ้นสุดสถานภาพนิสิต (รีไทร์)';
+    badgeEl.className = 'status-badge badge-retire';
+    warnEl.innerHTML = `<div class="warn-box" style="margin-top:10px;">${warnSvg('red')}GPAX ถึงเกณฑ์รีไทร์ — สิ้นสุดสถานภาพนิสิต</div>`;
+  } else if (finalGPAX < 1.75) {
+    card.classList.add('status-pro-low');
+    gpaEl.className = 'status-gpa gpa-pro-low';
+    badgeEl.innerHTML = '<span class="status-dot dot-pro-low"></span>โปรต่ำ (รอพินิจ)';
+    badgeEl.className = 'status-badge badge-pro-low';
+    const consec = getConsecLow(semResults);
+    let barHtml = '<div class="pro-count-bar">';
+    for (let i=0;i<2;i++) barHtml += '<div class="pro-dot ' + (i < consec ? 'filled' : 'empty') + '">' + (i < consec ? '✕' : (i+1)) + '</div>';
+    barHtml += '<span style="font-size:12px; color:var(--amber); margin-left:4px;">ภาคโปรต่ำสะสม</span></div>';
+    warnEl.innerHTML = `<div class="warn-box warn-amber" style="margin-top:10px;">${warnSvg('amber')}GPAX อยู่ในโปรต่ำ (${gpaxStr}) — ติดต่อกัน ${consec}/2 ภาค ถ้าครบ 2 ภาคติดต่อกันจะถูกรีไทร์</div>${barHtml}`;
+  } else if (finalGPAX < 2.00) {
+    card.classList.add('status-pro-high');
+    gpaEl.className = 'status-gpa gpa-pro-high';
+    badgeEl.innerHTML = '<span class="status-dot dot-pro-high"></span>โปรสูง (รอพินิจ)';
+    badgeEl.className = 'status-badge badge-pro-high';
+    warnEl.innerHTML = `<div class="warn-box warn-gold" style="margin-top:10px;">${warnSvg('gold')}GPAX อยู่ในโปรสูง (${gpaxStr}) — ยังไม่มีผลทันที แต่ต้องทำให้ GPAX &ge; 2.00 เพื่อสำเร็จการศึกษา</div>`;
+  } else {
+    card.classList.add('status-ok');
+    gpaEl.className = 'status-gpa';
+    badgeEl.innerHTML = '<span class="status-dot dot-ok"></span>ปกติ';
+    badgeEl.className = 'status-badge badge-ok';
+    warnEl.innerHTML = '';
+  }
+}
+
+function warnSvg(color) {
+  const c = color === 'red' ? '#B71C1C' : color === 'amber' ? '#E65100' : '#B8860B';
+  return `<svg class="warn-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 2L14.5 13.5H1.5L8 2Z" stroke="${c}" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6.5V9.5" stroke="${c}" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11.5" r="0.75" fill="${c}"/></svg>`;
+}
+
+function getConsecLow(semResults) {
+  let consec = 0;
+  for (let i = semResults.length - 1; i >= 1; i--) {
+    if (semResults[i].statusType === 'pro-low') consec++;
+    else break;
+  }
+  return consec;
+}
+
+function renderHistoryTable(semResults) {
+  const section = document.getElementById('historySection');
+  const tbody = document.getElementById('historyBody');
+  const filled = semResults.filter(r => r.gpa !== null && !isNaN(r.gpa));
+  if (filled.length === 0) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+
+  tbody.innerHTML = filled.map(r => {
+    const gpaxStr = r.gpax !== null ? r.gpax.toFixed(2) : '—';
+    const gpaStr = r.gpa !== null ? r.gpa.toFixed(2) : '—';
+    let statusTxt = '';
+    if (r.isFirst) statusTxt = '<span style="color:#1565C0;font-size:12px;">เทอมแรก</span>';
+    else if (r.statusType==='ok') statusTxt = '<span style="color:#2E7D32;font-size:12px;">ปกติ</span>';
+    else if (r.statusType==='pro-high') statusTxt = '<span style="color:#E65100;font-size:12px;">โปรสูง</span>';
+    else if (r.statusType==='pro-low') statusTxt = '<span style="color:#BF360C;font-size:12px;">โปรต่ำ</span>';
+    else if (r.statusType==='retire') statusTxt = '<span style="color:#B71C1C;font-size:12px;font-weight:600;">รีไทร์</span>';
+    else statusTxt = '—';
+    return `<tr><td>${r.sem.label}</td><td style="font-weight:500;">${gpaStr}</td><td style="font-weight:600;">${gpaxStr}</td><td>${statusTxt}</td></tr>`;
+  }).join('');
+}
+
+// ===== CALC TAB: single semester =====
+let calcSubjects = [];
+function uid() { return '_' + Math.random().toString(36).slice(2,8); }
+
+function addCalcSubject() {
+  calcSubjects.push({ id: uid(), name: '', credits: 3, grade: 'C' });
+  renderCalcSubjects();
+}
+
+function renderCalcSubjects() {
+  const tbody = document.getElementById('calcSubjectList');
+  tbody.innerHTML = calcSubjects.map(sub => {
+    const gradeOpts = GRADE_OPTIONS.map(g => `<option value="${g}"${sub.grade===g?' selected':''}>${g}</option>`).join('');
+    return `<tr id="calcsubrow-${sub.id}">
+      <td><input class="sub-name-input" type="text" placeholder="ชื่อวิชา (ไม่บังคับ)" value="${sub.name}" oninput="updateCalcSub('${sub.id}','name',this.value)"></td>
+      <td><input class="sub-credit-input" type="number" min="0" max="6" step="1" value="${sub.credits}" oninput="updateCalcSub('${sub.id}','credits',parseFloat(this.value)||0)"></td>
+      <td><select class="sub-grade-select" onchange="updateCalcSub('${sub.id}','grade',this.value)">${gradeOpts}</select></td>
+      <td><button class="btn-icon" onclick="deleteCalcSub('${sub.id}')" title="ลบวิชา">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="#607D8B" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button></td>
+    </tr>`;
+  }).join('');
+  updateCalcResult();
+}
+
+function updateCalcSub(id, field, value) {
+  const sub = calcSubjects.find(s => s.id === id);
+  if (!sub) return;
+  sub[field] = value;
+  updateCalcResult();
+}
+
+function deleteCalcSub(id) {
+  calcSubjects = calcSubjects.filter(s => s.id !== id);
+  renderCalcSubjects();
+}
+
+function updateCalcResult() {
+  let totalPts = 0, totalCr = 0;
+  let gradeCounts = {};
+  calcSubjects.forEach(sub => {
+    if (sub.grade !== 'W' && sub.grade && sub.credits > 0) {
+      totalPts += GRADE_POINTS[sub.grade] * sub.credits;
+      totalCr += sub.credits;
+      gradeCounts[sub.grade] = (gradeCounts[sub.grade] || 0) + 1;
+    }
+  });
+
+  const gpaEl = document.getElementById('calcGPADisplay');
+  const crEl = document.getElementById('calcCreditDisplay');
+  const letterEl = document.getElementById('calcLetterDisplay');
+  const bdEl = document.getElementById('gradeBreakdown');
+
+  if (totalCr === 0) {
+    gpaEl.textContent = '—';
+    crEl.textContent = 'ยังไม่มีวิชา';
+    letterEl.textContent = '';
+    bdEl.innerHTML = '';
+    return;
+  }
+
+  const gpa = totalPts / totalCr;
+  gpaEl.textContent = gpa.toFixed(2);
+  crEl.textContent = totalCr + ' หน่วยกิต';
+
+  // Letter summary
+  let gradeLabel = gpa >= 3.5 ? 'ดีมาก' : gpa >= 3.0 ? 'ดี' : gpa >= 2.5 ? 'ค่อนข้างดี' : gpa >= 2.0 ? 'พอใช้' : gpa >= 1.5 ? 'โปรต่ำ' : gpa >= 1.0 ? 'ต่ำมาก' : 'ตก';
+  letterEl.innerHTML = `<span style="font-size:12px; opacity:0.75;">ระดับ</span><br>${gradeLabel}`;
+
+  // Breakdown
+  if (Object.keys(gradeCounts).length > 0) {
+    bdEl.innerHTML = Object.entries(gradeCounts).map(([g, cnt]) => `
+      <div class="grade-chip">
+        <div class="grade-chip-letter">${g} <span style="font-size:11px; font-weight:400;">&times;${cnt}</span></div>
+        <div class="grade-chip-pts">${GRADE_POINTS[g] !== undefined ? GRADE_POINTS[g].toFixed(2) : 'W'} pts</div>
+      </div>
+    `).join('');
+  } else {
+    bdEl.innerHTML = '';
+  }
+}
+
+// ===== LOGO UPLOAD =====
+document.getElementById('logoCircle').addEventListener('click', () => {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.onchange = e => {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = document.getElementById('logoImg');
+      img.src = ev.target.result;
+      img.classList.add('loaded');
+      document.querySelector('.logo-placeholder-text').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  };
+  inp.click();
+});
+
+// ===== INIT =====
+initCheckerGrid();
+</script>
+</body>
+</html>
