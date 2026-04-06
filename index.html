@@ -810,15 +810,22 @@ function initCheckerGrid() {
 
 function onCheckerInput(idx, value) {
   let v = value.trim();
-  const num = parseFloat(v);
+  let num = parseFloat(v);
+
   if (v !== '' && !isNaN(num)) {
-    if (num > 4.00) { v = '4.00'; }
-    if (num < 0) { v = '0.00'; }
-    // update input element value if clamped
-    const rowEl = document.getElementById('checkerrow-' + idx);
-    const inputEl = rowEl ? rowEl.querySelector('.checker-input') : null;
-    if (inputEl && parseFloat(inputEl.value) !== parseFloat(v)) inputEl.value = v;
+    if (num > 4) num = 4;
+    if (num < 0) num = 0;
+
+    v = num.toFixed(2);
   }
+
+  const rowEl = document.getElementById('checkerrow-' + idx);
+  const inputEl = rowEl ? rowEl.querySelector('.checker-input') : null;
+
+  if (inputEl) {
+    inputEl.value = v; // 🔥 บังคับอัปเดตทุกครั้ง
+  }
+
   checkerGPAs[idx] = v;
   updateCheckerAll();
 }
