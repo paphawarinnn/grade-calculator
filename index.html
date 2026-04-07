@@ -56,6 +56,24 @@
     border-radius: 50%;
     background: rgba(255,255,255,0.04);
   }
+ .checker-credit-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap; /* กันจอเล็กแล้วพัง */
+}
+
+.checker-credit-label {
+  display: inline-block;
+  min-width: 80px;
+  color: #000; /* กันสีหาย */
+  font-size: 14px;
+}
+
+.checker-credit-input {
+  flex: 1;
+  min-width: 100px;
+}
   .header::after {
     content: '';
     position: absolute;
