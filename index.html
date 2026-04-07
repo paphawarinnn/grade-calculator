@@ -1230,6 +1230,15 @@ function updateCalcResult() {
 
 // ===== INIT =====
 initCheckerGrid();
+ function limitCredit(el, idx) {
+  el.value = el.value.replace(/[^0-9]/g, '');
+
+  if (el.value !== '') {
+    el.value = Math.min(50, Math.max(0, parseInt(el.value)));
+  }
+
+  checkerCredits[idx] = el.value;
+}
 </script>
 </body>
 </html>
