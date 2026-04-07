@@ -895,19 +895,19 @@ function initCheckerGrid() {
         title="เกรดเฉลี่ย (GPA) ภาคนี้"
       >
 
-       <div class="checker-credit-wrap">
-        <span class="checker-credit-label">หน่วยกิต :</span>
-      
-        <input
-          class="checker-credit-input${checkerCredits[idx] !== '' ? ' has-value' : ''}"
-          id="checkercredit-${idx}"
-          type="number"
-          min="0"
-          max="50"
-          placeholder="—"
-          value="${checkerCredits[idx] ?? ''}"
-          oninput="onCheckerCredit(${idx}, this)"
-        >
+     <div class="checker-credit-wrap">
+       <span class="checker-credit-label">หน่วยกิต :</span>
+     
+       <input
+         class="checker-credit-input${checkerCredits[idx] !== '' ? ' has-value' : ''}"
+         id="checkercredit-${idx}"
+         type="number"
+         min="0"
+         max="50"
+         placeholder="—"
+         value="${checkerCredits[idx] ?? ''}"
+         oninput="limitCredit(this, ${idx})"
+       >
       </div>
       <span class="checker-status-chip chip-empty" id="checkerchip-${idx}">—</span>
     `;
