@@ -223,6 +223,11 @@
     border-color: #FFE082;
     color: var(--gold);
   }
+  .warn-box.warn-info {
+    background: #E3F2FD;
+    border-color: #BBDEFB;
+    color: #1565C0;
+  }
   .warn-icon {
     flex-shrink: 0;
     width: 16px; height: 16px;
@@ -242,8 +247,9 @@
     display: flex;
     align-items: center;
     padding: 10px 14px;
-    gap: 12px;
+    gap: 10px;
     transition: border-color 0.2s;
+    flex-wrap: nowrap;
   }
   .checker-row:focus-within {
     border-color: var(--green-mid);
@@ -258,9 +264,11 @@
     font-size: 13px;
     font-weight: 500;
     color: var(--gray);
-    min-width: 100px;
+    min-width: 96px;
     flex-shrink: 0;
   }
+
+  /* ── GPA input (unchanged width) ── */
   .checker-input {
     border: 1px solid var(--border);
     border-radius: 6px;
@@ -269,15 +277,53 @@
     font-size: 15px;
     font-weight: 600;
     color: var(--green);
-    width: 100px;
+    width: 86px;
     outline: none;
     transition: border-color 0.2s;
     text-align: center;
+    flex-shrink: 0;
   }
   .checker-input:focus { border-color: var(--green-mid); }
   .checker-input.val-pro-high { color: #E65100; }
   .checker-input.val-pro-low { color: #BF360C; }
   .checker-input.val-retire { color: var(--red); }
+
+  /* ── NEW: credit input ── */
+  .checker-credit-wrap {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .checker-credit-label {
+    font-size: 11px;
+    color: var(--gray-mid);
+    white-space: nowrap;
+  }
+  .checker-credit-input {
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+    padding: 6px 6px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 13px;
+    color: var(--gray-mid);
+    width: 52px;
+    outline: none;
+    text-align: center;
+    background: var(--bg);
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .checker-credit-input:focus {
+    border-color: var(--green-mid);
+    border-style: solid;
+    color: var(--gray);
+  }
+  .checker-credit-input.has-value {
+    border-style: solid;
+    border-color: var(--green-soft);
+    color: var(--green-mid);
+    font-weight: 600;
+  }
 
   .checker-status-chip {
     font-size: 11px;
@@ -286,6 +332,7 @@
     border-radius: 50px;
     white-space: nowrap;
     margin-left: auto;
+    flex-shrink: 0;
   }
   .chip-ok { background: var(--green-light); color: var(--green); }
   .chip-first { background: #E3F2FD; color: #1565C0; }
@@ -293,6 +340,30 @@
   .chip-pro-low { background: #FBE9E7; color: #BF360C; }
   .chip-retire { background: var(--red-light); color: var(--red); font-weight: 700; }
   .chip-empty { background: var(--gray-light); color: var(--gray-mid); }
+
+  /* CALC MODE BADGE */
+  .calc-mode-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 9px;
+    border-radius: 50px;
+    margin-left: 8px;
+    vertical-align: middle;
+    transition: all 0.25s;
+  }
+  .calc-mode-tag.mode-weighted {
+    background: #E8F5E9;
+    color: #2E7D32;
+    border: 1px solid #A5D6A7;
+  }
+  .calc-mode-tag.mode-avg {
+    background: #ECEFF1;
+    color: #607D8B;
+    border: 1px solid #CFD8DC;
+  }
 
   /* HISTORY TABLE */
   .history-table {
@@ -536,12 +607,15 @@
   @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
   .calc-single-card { animation: fadeIn 0.2s ease; }
 
-  @media (max-width: 480px) {
+  @media (max-width: 520px) {
     .app-title { font-size: 18px; }
     .status-gpa { font-size: 30px; }
     .grade-breakdown { grid-template-columns: repeat(4, 1fr); }
     .tab-btn { padding: 8px 14px; font-size: 13px; }
-    .checker-label { min-width: 80px; font-size: 12px; }
+    .checker-label { min-width: 76px; font-size: 11px; }
+    .checker-credit-label { display: none; }
+    .checker-credit-input { width: 46px; }
+    .checker-input { width: 76px; font-size: 14px; }
   }
 </style>
 </head>
@@ -559,10 +633,6 @@
       <span></span>
     </div>
   </div>
-  <!-- <div style="padding-bottom: 4px;">
-    <div class="app-title">เช็คโปรและสถานะการศึกษา</div>
-    <div class="app-sub">ตรวจสอบเกรดเฉลี่ยสะสมและสถานภาพนิสิต</div>
-  </div> -->
   <div class="tabs-wrap">
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('checker', this)">เช็คสถานะ</button>
@@ -578,10 +648,26 @@
   <div class="tab-content active" id="tab-checker">
 
     <div class="status-card status-empty" id="mainStatusCard">
-      <div class="status-label" style="margin-bottom:6px; font-size:13px;">เกรดเฉลี่ยสะสม (GPAX)</div>
+      <div class="status-label" style="margin-bottom:6px; font-size:13px;">
+        เกรดเฉลี่ยสะสม (GPAX)
+        <span class="calc-mode-tag mode-avg" id="calcModeTag">ค่าเฉลี่ย</span>
+      </div>
       <div class="status-gpa" id="displayGPAX">—</div>
       <span class="status-badge badge-empty" id="statusBadge"><span class="status-dot"></span>ยังไม่มีข้อมูล</span>
       <div id="warningArea"></div>
+    </div>
+
+    <!-- ── hint note ── -->
+    <div class="warn-box warn-info" style="margin-bottom:12px; font-size:12px; line-height:1.6;">
+      <svg class="warn-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="8" cy="8" r="6.5" stroke="#1565C0" stroke-width="1.4"/>
+        <path d="M8 7v5" stroke="#1565C0" stroke-width="1.4" stroke-linecap="round"/>
+        <circle cx="8" cy="5" r="0.75" fill="#1565C0"/>
+      </svg>
+      <div>
+        <b>กรอกหน่วยกิต (ไม่บังคับ)</b> — หากกรอกหน่วยกิตรวมต่อเทอม ระบบจะคำนวณ GPAX แบบถ่วงน้ำหนักได้แม่นยำขึ้น<br>
+        ถ้าไม่กรอก ระบบใช้ค่าเฉลี่ย GPA แต่ละเทอมแบบปกติ
+      </div>
     </div>
 
     <div style="margin-bottom: 10px;">
@@ -598,6 +684,7 @@
             <tr>
               <th>ภาค</th>
               <th>GPA ภาคนี้</th>
+              <th>หน่วยกิต</th>
               <th>GPAX สะสม</th>
               <th>สถานะ</th>
             </tr>
@@ -699,9 +786,9 @@
         <div class="guide-dot" style="background:#1565C0;"></div>
         <div>
           <div class="guide-range">เทอมแรก (ปี 1 เทอม 1)</div>
-          <div class="guide-desc">ในภาคการศึกษาแรกของนิสิต (ปี 1 เทอม 1) จะยังไม่ใช้เกณฑ์การพิจารณาสถานภาพ “โปรต่ำ” และ “พ้นสภาพนิสิต (รีไทร์)”
+          <div class="guide-desc">ในภาคการศึกษาแรกของนิสิต (ปี 1 เทอม 1) จะยังไม่ใช้เกณฑ์การพิจารณาสถานภาพ "โปรต่ำ" และ "พ้นสภาพนิสิต (รีไทร์)"
                      อย่างไรก็ตาม ผลการเรียนจะยังคงถูกคำนวณสะสมในระบบ GPAX ตามปกติ
-                     ทั้งนี้ เงื่อนไขการพ้นสภาพนิสิตจากการติด “โปรต่ำติดต่อกัน 2 ภาคการศึกษา” และเกณฑ์ GPAX ต่ำกว่า 1.50 จะเริ่มมีผลบังคับใช้ตั้งแต่ภาคการศึกษาถัดไป</div>
+                     ทั้งนี้ เงื่อนไขการพ้นสภาพนิสิตจากการติด "โปรต่ำติดต่อกัน 2 ภาคการศึกษา" และเกณฑ์ GPAX ต่ำกว่า 1.50 จะเริ่มมีผลบังคับใช้ตั้งแต่ภาคการศึกษาถัดไป</div>
         </div>
       </div>
       <div class="guide-row">
@@ -711,6 +798,16 @@
           <div class="guide-desc">A=4.00, B+=3.50, B=3.00, C+=2.50, C=2.00, D+=1.50, D=1.00, F=0.00 (W ถอน ไม่นับในเกรดเฉลี่ย)</div>
         </div>
       </div>
+      <div class="guide-row">
+        <div class="guide-dot" style="background:#2E7D32;"></div>
+        <div>
+          <div class="guide-range">การคำนวณ GPAX</div>
+          <div class="guide-desc">
+            <b>แบบถ่วงน้ำหนัก (แม่นยำ)</b> — กรอกหน่วยกิตต่อเทอม ระบบคำนวณ GPAX = Σ(GPA × หน่วยกิต) ÷ Σหน่วยกิต<br>
+            <b>แบบค่าเฉลี่ย (ประมาณ)</b> — ไม่กรอกหน่วยกิต ระบบเฉลี่ย GPA แต่ละเทอมเท่ากัน
+          </div>
+        </div>
+      </div>
     </div>
     <div class="guide-card">
       <div class="guide-title">วิธีใช้งาน</div>
@@ -718,6 +815,7 @@
         <div style="font-size:13px; color:var(--gray-mid); line-height:1.8;">
           <b style="color:var(--green);">แท็บ "เช็คสถานะ"</b><br>
           — กรอกเกรดเฉลี่ย (GPA) ในแต่ละเทอมในช่องที่ตรงกัน<br>
+          — กรอก <b>หน่วยกิต</b> ต่อเทอม (ไม่บังคับ) เพื่อให้ GPAX แม่นยำขึ้น<br>
           — ระบบจะคำนวณ GPAX สะสมและตรวจสอบสถานะโปรอัตโนมัติ<br>
           — ปล่อยว่างเทอมที่ยังไม่ถึงหรือยังไม่มีผลเกรด<br><br>
           <b style="color:var(--green);">แท็บ "คำนวณเกรด"</b><br>
@@ -738,7 +836,6 @@
     <a href="https://www.facebook.com/share/1N1tKHZgDs/?mibextid=wwXIfr" target="_blank" style="margin-right:10px; color:#1877f2;">
       <i class="fab fa-facebook"></i> Facebook
     </a>
-
     <a href="https://www.instagram.com/kusc.csc?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" style="color:#e4405f;">
       <i class="fab fa-instagram"></i> Instagram
     </a>
@@ -761,7 +858,7 @@ function switchTab(tab, btn) {
   btn.classList.add('active');
 }
 
-// ===== CHECKER: fixed semester list pY1T1 ... pY8T2 =====
+// ===== CHECKER: fixed semester list =====
 const SEMESTER_LIST = [];
 for (let y = 1; y <= 8; y++) {
   for (let t = 1; t <= 2; t++) {
@@ -769,8 +866,9 @@ for (let y = 1; y <= 8; y++) {
   }
 }
 
-// Store GPA values per semester index
-const checkerGPAs = new Array(SEMESTER_LIST.length).fill('');
+// Store GPA and credits per semester index
+const checkerGPAs     = new Array(SEMESTER_LIST.length).fill('');
+const checkerCredits  = new Array(SEMESTER_LIST.length).fill(''); // optional
 
 function initCheckerGrid() {
   const grid = document.getElementById('checkerGrid');
@@ -781,19 +879,39 @@ function initCheckerGrid() {
     row.id = 'checkerrow-' + idx;
 
     const isFirst = idx === 0;
-    const firstNote = isFirst ? ' <span style="font-size:11px; color:#1565C0;">(เทอมแรก)</span>' : '';
+    const firstNote = isFirst
+      ? ' <span style="font-size:11px; color:#1565C0;">(เทอมแรก)</span>'
+      : '';
 
     row.innerHTML = `
       <span class="checker-label">${sem.label}${firstNote}</span>
+
       <input
         class="checker-input"
         type="number"
         step="0.01" min="0" max="4"
-        placeholder="0.00"
+        placeholder="GPA"
         value="${checkerGPAs[idx]}"
-        onchange="onCheckerInput(${idx}, this.value)"
-        oninput="onCheckerInput(${idx}, this.value)"
+        onchange="onCheckerGPA(${idx}, this.value)"
+        oninput="onCheckerGPA(${idx}, this.value)"
+        title="เกรดเฉลี่ย (GPA) ภาคนี้"
       >
+
+      <div class="checker-credit-wrap">
+        <span class="checker-credit-label">หน่วยกิต</span>
+        <input
+          class="checker-credit-input${checkerCredits[idx] !== '' ? ' has-value' : ''}"
+          id="checkercredit-${idx}"
+          type="number"
+          step="1" min="0" max="99"
+          placeholder="—"
+          value="${checkerCredits[idx]}"
+          onchange="onCheckerCredit(${idx}, this.value)"
+          oninput="onCheckerCredit(${idx}, this.value)"
+          title="หน่วยกิตรวมภาคนี้ (ไม่บังคับ)"
+        >
+      </div>
+
       <span class="checker-status-chip chip-empty" id="checkerchip-${idx}">—</span>
     `;
     grid.appendChild(row);
@@ -801,13 +919,12 @@ function initCheckerGrid() {
   updateCheckerAll();
 }
 
-function onCheckerInput(idx, value) {
+function onCheckerGPA(idx, value) {
   let v = value.trim();
   const num = parseFloat(v);
   if (v !== '' && !isNaN(num)) {
-    if (num > 4.00) { v = '4.00'; }
-    if (num < 0) { v = '0.00'; }
-    // update input element value if clamped
+    if (num > 4.00) v = '4.00';
+    if (num < 0)    v = '0.00';
     const rowEl = document.getElementById('checkerrow-' + idx);
     const inputEl = rowEl ? rowEl.querySelector('.checker-input') : null;
     if (inputEl && parseFloat(inputEl.value) !== parseFloat(v)) inputEl.value = v;
@@ -815,100 +932,107 @@ function onCheckerInput(idx, value) {
   checkerGPAs[idx] = v;
   updateCheckerAll();
 }
-function updateCheckerAll() {
-  // Build cumulative calculation
-  let cumulativePts = 0;
-  let cumulativeCount = 0; // number of sems with data (for weighted avg we need credits — since no credits, we treat each entered GPA equally as 1 unit weight, OR we can just average across filled sems)
-  // Actually: user enters GPA per semester, no credits. We'll do a simple unweighted average across entered sems.
-  // But that's not accurate academically. We'll note this in UI.
-  // Better: treat entered GPA as equally weighted (each semester = 1 weight unit)
 
+function onCheckerCredit(idx, value) {
+  let v = value.trim();
+  const num = parseFloat(v);
+  if (v !== '' && !isNaN(num)) {
+    if (num < 0) v = '0';
+  }
+  checkerCredits[idx] = v;
+
+  // toggle styling
+  const el = document.getElementById('checkercredit-' + idx);
+  if (el) {
+    el.classList.toggle('has-value', v !== '');
+  }
+  updateCheckerAll();
+}
+
+/* ── Determine whether to use weighted or simple average ── */
+function computeGPAX(entries) {
+  // entries = array of { gpa, credits } for sems with gpa filled
+  const anyCredit = entries.some(e => e.credits !== null && e.credits > 0);
+
+  if (anyCredit) {
+    // Weighted: for sems WITH credit use weighted; sems WITHOUT credit — estimate weight 1
+    let totalPts = 0, totalW = 0;
+    entries.forEach(e => {
+      const w = (e.credits !== null && e.credits > 0) ? e.credits : 1;
+      totalPts += e.gpa * w;
+      totalW   += w;
+    });
+    return { gpax: totalW > 0 ? totalPts / totalW : null, weighted: true };
+  } else {
+    // Simple average
+    const sum = entries.reduce((a, e) => a + e.gpa, 0);
+    return { gpax: entries.length > 0 ? sum / entries.length : null, weighted: false };
+  }
+}
+
+function updateCheckerAll() {
   let consecutiveLow = 0;
   let retired = false;
-  let retiredIdx = -1;
   let semResults = [];
 
+  // Cumulative weighted calc
+  let cumulativeEntries = [];
+
   SEMESTER_LIST.forEach((sem, idx) => {
-    const rawVal = checkerGPAs[idx];
-    const gpa = rawVal !== '' && rawVal !== null ? parseFloat(rawVal) : null;
+    const rawGPA  = checkerGPAs[idx];
+    const rawCr   = checkerCredits[idx];
+    const gpa     = rawGPA !== '' && rawGPA !== null ? parseFloat(rawGPA) : null;
+    const credits = rawCr !== '' && rawCr !== null && parseFloat(rawCr) > 0 ? parseFloat(rawCr) : null;
     const isFirst = idx === 0;
 
-    let gpax = null;
     if (gpa !== null && !isNaN(gpa)) {
-      cumulativePts += gpa;
-      cumulativeCount++;
-    }
-    if (cumulativeCount > 0) {
-      gpax = cumulativePts / cumulativeCount;
+      cumulativeEntries.push({ gpa, credits });
     }
 
+    const { gpax } = cumulativeEntries.length > 0
+      ? computeGPAX(cumulativeEntries)
+      : { gpax: null };
+
     let statusType = 'empty';
-    let chipClass = 'chip-empty';
-    let chipText = '—';
-    let rowClass = isFirst ? 'row-first' : '';
+    let chipClass  = 'chip-empty';
+    let chipText   = '—';
+    let rowClass   = isFirst ? 'row-first' : '';
 
     if (!retired && gpa !== null && !isNaN(gpa)) {
       if (isFirst) {
-        statusType = 'first';
-        chipClass = 'chip-first';
-        chipText = 'เทอมแรก';
-        rowClass = 'row-first';
+        statusType = 'first'; chipClass = 'chip-first'; chipText = 'เทอมแรก'; rowClass = 'row-first';
         consecutiveLow = 0;
       } else {
         if (gpax < 1.50) {
-          retired = true; retiredIdx = idx;
-          statusType = 'retire';
-          chipClass = 'chip-retire';
-          chipText = 'รีไทร์';
-          rowClass = 'row-retire';
+          retired = true;
+          statusType = 'retire'; chipClass = 'chip-retire'; chipText = 'รีไทร์'; rowClass = 'row-retire';
         } else if (gpax < 1.75) {
           consecutiveLow++;
-          if (consecutiveLow >= 2) { retired = true; retiredIdx = idx; }
-          statusType = 'pro-low';
-          chipClass = 'chip-pro-low';
-          chipText = 'โปรต่ำ';
-          rowClass = 'row-pro-low';
+          if (consecutiveLow >= 2) { retired = true; }
+          statusType = 'pro-low'; chipClass = 'chip-pro-low'; chipText = 'โปรต่ำ'; rowClass = 'row-pro-low';
         } else if (gpax < 2.00) {
           consecutiveLow = 0;
-          statusType = 'pro-high';
-          chipClass = 'chip-pro-high';
-          chipText = 'โปรสูง';
-          rowClass = 'row-pro-high';
+          statusType = 'pro-high'; chipClass = 'chip-pro-high'; chipText = 'โปรสูง'; rowClass = 'row-pro-high';
         } else {
           consecutiveLow = 0;
-          statusType = 'ok';
-          chipClass = 'chip-ok';
-          chipText = 'ปกติ';
-          rowClass = 'row-ok';
+          statusType = 'ok'; chipClass = 'chip-ok'; chipText = 'ปกติ'; rowClass = 'row-ok';
         }
       }
-    } else if (retired) {
-      statusType = 'retire';
-      chipClass = 'chip-empty';
-      chipText = '—';
     }
 
-    semResults.push({ idx, sem, gpa, gpax, statusType, chipClass, chipText, rowClass, isFirst });
+    semResults.push({ idx, sem, gpa, credits, gpax, statusType, chipClass, chipText, rowClass, isFirst });
 
-    // Update row class
     const rowEl = document.getElementById('checkerrow-' + idx);
-    if (rowEl) {
-      rowEl.className = 'checker-row' + (rowClass ? ' ' + rowClass : '');
-    }
+    if (rowEl) rowEl.className = 'checker-row' + (rowClass ? ' ' + rowClass : '');
 
-    // Update chip
     const chipEl = document.getElementById('checkerchip-' + idx);
-    if (chipEl) {
-      chipEl.className = 'checker-status-chip ' + chipClass;
-      chipEl.textContent = chipText;
-    }
+    if (chipEl) { chipEl.className = 'checker-status-chip ' + chipClass; chipEl.textContent = chipText; }
 
-    // Update input color based on GPAX at that semester
     const inputEl = rowEl ? rowEl.querySelector('.checker-input') : null;
     if (inputEl) {
       inputEl.className = 'checker-input';
       if (gpa !== null && !isNaN(gpa) && gpax !== null && !isFirst) {
-        if (gpax < 1.50) inputEl.classList.add('val-retire');
+        if (gpax < 1.50)      inputEl.classList.add('val-retire');
         else if (gpax < 1.75) inputEl.classList.add('val-pro-low');
         else if (gpax < 2.00) inputEl.classList.add('val-pro-high');
       }
@@ -916,15 +1040,34 @@ function updateCheckerAll() {
   });
 
   // Final GPAX
-  const finalGPAX = cumulativeCount > 0 ? cumulativePts / cumulativeCount : null;
+  const filled = semResults.filter(r => r.gpa !== null && !isNaN(r.gpa));
+  const { gpax: finalGPAX, weighted: isWeighted } = filled.length > 0
+    ? computeGPAX(filled.map(r => ({ gpa: r.gpa, credits: r.credits })))
+    : { gpax: null, weighted: false };
+
+  // Update mode tag
+  const modeTag = document.getElementById('calcModeTag');
+  if (modeTag) {
+    if (filled.length === 0) {
+      modeTag.textContent = '';
+      modeTag.className = 'calc-mode-tag';
+    } else if (isWeighted) {
+      modeTag.textContent = '✓ ถ่วงน้ำหนัก';
+      modeTag.className = 'calc-mode-tag mode-weighted';
+    } else {
+      modeTag.textContent = 'ค่าเฉลี่ย';
+      modeTag.className = 'calc-mode-tag mode-avg';
+    }
+  }
+
   renderMainStatusCard(finalGPAX, retired, semResults);
-  renderHistoryTable(semResults);
+  renderHistoryTable(semResults, isWeighted);
 }
 
 function renderMainStatusCard(finalGPAX, retired, semResults) {
-  const card = document.getElementById('mainStatusCard');
-  const gpaEl = document.getElementById('displayGPAX');
-  const badgeEl = document.getElementById('statusBadge');
+  const card   = document.getElementById('mainStatusCard');
+  const gpaEl  = document.getElementById('displayGPAX');
+  const badgeEl= document.getElementById('statusBadge');
   const warnEl = document.getElementById('warningArea');
 
   card.className = 'status-card';
@@ -939,18 +1082,19 @@ function renderMainStatusCard(finalGPAX, retired, semResults) {
     return;
   }
 
-  const gpaxStr = finalGPAX.toFixed(2);
+  const gpaxStr  = finalGPAX.toFixed(2);
   gpaEl.textContent = gpaxStr;
-  // เพิ่มก่อน if (retired) { ...
+
   const onlyFirst = semResults.every(r => r.gpa === null || isNaN(r.gpa) || r.isFirst);
   if (onlyFirst) {
-  card.classList.add('status-ok');
-  gpaEl.className = 'status-gpa';
-  badgeEl.innerHTML = '<span class="status-dot dot-ok"></span>เทอมแรก';
-  badgeEl.className = 'status-badge badge-ok';
-  warnEl.innerHTML = `<div class="warn-box warn-gold" style="margin-top:10px;">${warnSvg('gold')}เทอมแรกยังไม่นับเกณฑ์โปรต่ำและรีไทร์ — เกรดยังคิดสะสมตามปกติ</div>`;
-  return;
- }
+    card.classList.add('status-ok');
+    gpaEl.className = 'status-gpa';
+    badgeEl.innerHTML = '<span class="status-dot dot-ok"></span>เทอมแรก';
+    badgeEl.className = 'status-badge badge-ok';
+    warnEl.innerHTML = `<div class="warn-box warn-gold" style="margin-top:10px;">${warnSvg('gold')}เทอมแรกยังไม่นับเกณฑ์โปรต่ำและรีไทร์ — เกรดยังคิดสะสมตามปกติ</div>`;
+    return;
+  }
+
   if (retired) {
     card.classList.add('status-retire');
     gpaEl.className = 'status-gpa gpa-retire';
@@ -964,7 +1108,8 @@ function renderMainStatusCard(finalGPAX, retired, semResults) {
     badgeEl.className = 'status-badge badge-pro-low';
     const consec = getConsecLow(semResults);
     let barHtml = '<div class="pro-count-bar">';
-    for (let i=0;i<2;i++) barHtml += '<div class="pro-dot ' + (i < consec ? 'filled' : 'empty') + '">' + (i < consec ? '✕' : (i+1)) + '</div>'
+    for (let i=0;i<2;i++) barHtml += '<div class="pro-dot ' + (i < consec ? 'filled' : 'empty') + '">' + (i < consec ? '✕' : (i+1)) + '</div>';
+    barHtml += '</div>';
     warnEl.innerHTML = `<div class="warn-box warn-amber" style="margin-top:10px;">${warnSvg('amber')}GPAX อยู่ในโปรต่ำ (${gpaxStr}) — ถ้าติดต่อกันครบ 2 ภาคจะถูกรีไทร์</div>${barHtml}`;
   } else if (finalGPAX < 2.00) {
     card.classList.add('status-pro-high');
@@ -995,24 +1140,31 @@ function getConsecLow(semResults) {
   return consec;
 }
 
-function renderHistoryTable(semResults) {
+function renderHistoryTable(semResults, isWeighted) {
   const section = document.getElementById('historySection');
-  const tbody = document.getElementById('historyBody');
-  const filled = semResults.filter(r => r.gpa !== null && !isNaN(r.gpa));
+  const tbody   = document.getElementById('historyBody');
+  const filled  = semResults.filter(r => r.gpa !== null && !isNaN(r.gpa));
   if (filled.length === 0) { section.style.display = 'none'; return; }
   section.style.display = 'block';
 
   tbody.innerHTML = filled.map(r => {
-    const gpaxStr = r.gpax !== null ? r.gpax.toFixed(2) : '—';
-    const gpaStr = r.gpa !== null ? r.gpa.toFixed(2) : '—';
-    let statusTxt = '';
-    if (r.isFirst) statusTxt = '<span style="color:#1565C0;font-size:12px;">เทอมแรก</span>';
-    else if (r.statusType==='ok') statusTxt = '<span style="color:#2E7D32;font-size:12px;">ปกติ</span>';
+    const gpaxStr  = r.gpax !== null ? r.gpax.toFixed(2) : '—';
+    const gpaStr   = r.gpa  !== null ? r.gpa.toFixed(2)  : '—';
+    const creditStr= r.credits !== null ? r.credits : '—';
+    let statusTxt  = '';
+    if      (r.isFirst)                 statusTxt = '<span style="color:#1565C0;font-size:12px;">เทอมแรก</span>';
+    else if (r.statusType==='ok')       statusTxt = '<span style="color:#2E7D32;font-size:12px;">ปกติ</span>';
     else if (r.statusType==='pro-high') statusTxt = '<span style="color:#E65100;font-size:12px;">โปรสูง</span>';
-    else if (r.statusType==='pro-low') statusTxt = '<span style="color:#BF360C;font-size:12px;">โปรต่ำ</span>';
-    else if (r.statusType==='retire') statusTxt = '<span style="color:#B71C1C;font-size:12px;font-weight:600;">รีไทร์</span>';
+    else if (r.statusType==='pro-low')  statusTxt = '<span style="color:#BF360C;font-size:12px;">โปรต่ำ</span>';
+    else if (r.statusType==='retire')   statusTxt = '<span style="color:#B71C1C;font-size:12px;font-weight:600;">รีไทร์</span>';
     else statusTxt = '—';
-    return `<tr><td>${r.sem.label}</td><td style="font-weight:500;">${gpaStr}</td><td style="font-weight:600;">${gpaxStr}</td><td>${statusTxt}</td></tr>`;
+    return `<tr>
+      <td>${r.sem.label}</td>
+      <td style="font-weight:500;">${gpaStr}</td>
+      <td style="color:${r.credits ? 'var(--green-mid)' : 'var(--gray-mid)'}; font-size:12px;">${creditStr}</td>
+      <td style="font-weight:600;">${gpaxStr}</td>
+      <td>${statusTxt}</td>
+    </tr>`;
   }).join('');
 }
 
@@ -1055,35 +1207,29 @@ function deleteCalcSub(id) {
 
 function updateCalcResult() {
   let totalPts = 0, totalCr = 0;
-  let gradeCounts = {};
   calcSubjects.forEach(sub => {
     if (sub.grade !== 'W' && sub.grade && sub.credits > 0) {
       totalPts += GRADE_POINTS[sub.grade] * sub.credits;
-      totalCr += sub.credits;
-      gradeCounts[sub.grade] = (gradeCounts[sub.grade] || 0) + 1;
+      totalCr  += sub.credits;
     }
   });
 
-  const gpaEl = document.getElementById('calcGPADisplay');
-  const crEl = document.getElementById('calcCreditDisplay');
+  const gpaEl    = document.getElementById('calcGPADisplay');
+  const crEl     = document.getElementById('calcCreditDisplay');
   const letterEl = document.getElementById('calcLetterDisplay');
 
   if (totalCr === 0) {
     gpaEl.textContent = '—';
-    crEl.textContent = 'ยังไม่มีวิชา';
+    crEl.textContent  = 'ยังไม่มีวิชา';
     letterEl.textContent = '';
     return;
   }
 
   const gpa = totalPts / totalCr;
   gpaEl.textContent = gpa.toFixed(2);
-  crEl.textContent = totalCr + ' หน่วยกิต';
-
-  // Clear letter grade label
+  crEl.textContent  = totalCr + ' หน่วยกิต';
   letterEl.innerHTML = '';
 }
-
-
 
 // ===== INIT =====
 initCheckerGrid();
