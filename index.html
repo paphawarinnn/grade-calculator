@@ -897,14 +897,14 @@ function initCheckerGrid() {
       >
 
       <div class="checker-credit-wrap">
-        <span class="checker-credit-label">หน่วยกิต</span>
+        <span class="checker-credit-label">หน่วยกิต :</span>
         <input
         <input
           class="checker-credit-input${checkerCredits[idx] !== '' ? ' has-value' : ''}"
           id="checkercredit-${idx}"
           type="number"
           min="0" max="50"
-          placeholder="หน่วยกิต"
+          placeholder="-"
           value="${checkerCredits[idx] ?? ''}"
           onchange="onCheckerCredit(${idx}, this.value)"
           oninput="onCheckerCredit(${idx}, this.value)"
